@@ -8,12 +8,29 @@ Object.assign=require('object-assign')
 app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
 
-var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
-    mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
-    mongoURLLabel = "";
+
+
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000;
+
+var ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+
+//    mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
+var mongoURLLabel = "";
+
+var mongoURL = 'mongodb://localhost/playground';
+
+//take advantage of openshift env vars when available:
+
+if (process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL){
+
+  mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL;
+
+}
+
 
 if (mongoURL == null) {
+	console.log("mongourl = null");
   var mongoHost, mongoPort, mongoDatabase, mongoPassword, mongoUser;
   // If using plane old env vars via service discovery
   if (process.env.DATABASE_SERVICE_NAME) {
@@ -76,10 +93,14 @@ var initDb = function(callback) {
 app.get('/', function (req, res) {
   // try to initialize the db on every request if it's not already
   // initialized.
+
   if (!db) {
+	    console.log('listen, !db');
     initDb(function(err){});
+//	res.render('index.html');
   }
   if (db) {
+	  	    console.log('listen!! to db');
     var col = db.collection('counts');
     // Create a document with request IP and current time of request
     col.insert({ip: req.ip, date: Date.now()});
@@ -88,6 +109,7 @@ app.get('/', function (req, res) {
         console.log('Error running count. Message:\n'+err);
       }
       res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails });
+	  console.log('rendering to index.html');
     });
   } else {
     res.render('index.html', { pageCountMessage : null});
