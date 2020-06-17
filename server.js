@@ -10,8 +10,8 @@ app.use(morgan('combined'))
 
 
 
-var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000;
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 80;
+//var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000;
 
 var ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 
