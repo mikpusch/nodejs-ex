@@ -1,4 +1,6 @@
 //  OpenShift sample Node application
+const local = false;
+
 var express = require('express'),
     app     = express(),
     morgan  = require('morgan');
@@ -8,12 +10,16 @@ Object.assign=require('object-assign')
 app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
 
-var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
-    mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
-    mongoURLLabel = "";
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
+if (local){
+	port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000;
+}
+var ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+var mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL;
+var mongoURLLabel = "";
 
 if (mongoURL == null) {
+	
   var mongoHost, mongoPort, mongoDatabase, mongoPassword, mongoUser;
   // If using plane old env vars via service discovery
   if (process.env.DATABASE_SERVICE_NAME) {
