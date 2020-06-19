@@ -1,5 +1,11 @@
 //  OpenShift sample Node application
-const local = false;
+const local = false; //false;
+
+var mongodb;
+if (local){
+	mongodb = require('mongodb');
+	
+}
 
 var express = require('express'),
     app     = express(),
@@ -16,10 +22,14 @@ if (local){
 }
 var ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 var mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL;
+
+if (local){
+	mongoURL = 'mongodb://localhost/playground';
+}
 var mongoURLLabel = "";
 
 if (mongoURL == null) {
-	
+		console.log("mongourl = null");
   var mongoHost, mongoPort, mongoDatabase, mongoPassword, mongoUser;
   // If using plane old env vars via service discovery
   if (process.env.DATABASE_SERVICE_NAME) {
